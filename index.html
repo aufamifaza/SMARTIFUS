@@ -42,22 +42,41 @@
     <div class="status" id="weight">Loading...</div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js"></script>
+
   <script>
-    // Dummy data dulu, nanti ganti ambil dari Firebase
-    let weight = 250; // contoh berat awal
+    // Firebase Config (punya project kamu)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDIRSY2vBMdGK10kGVcj5JYkPOGTI6oGc",
+      authDomain: "smartifus.firebaseapp.com",
+      databaseURL: "https://smartifus-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smartifus",
+      storageBucket: "smartifus.appspot.com",
+      messagingSenderId: "xxxxxxx",
+      appId: "xxxxxxx"
+    };
 
-    function updateWeight() {
-      const display = document.getElementById("weight");
+    // Init Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Baca data realtime
+    const weightDisplay = document.getElementById("weight");
+    firebase.database().ref("/infus").on("value", (snapshot) => {
+      const data = snapshot.val();
+      const weight = data.berat;
+      const status = data.status;
+
       if (weight <= 100) {
-        display.innerHTML = `Berat: ${weight} gram <br> ⚠ Infus hampir habis!`;
-        display.className = "status warning";
+        weightDisplay.innerHTML = `Berat: ${weight.toFixed(2)} gram <br> ⚠ ${status}`;
+        weightDisplay.className = "status warning";
       } else {
-        display.innerHTML = `Berat: ${weight} gram`;
-        display.className = "status normal";
+        weightDisplay.innerHTML = `Berat: ${weight.toFixed(2)} gram <br> ✅ ${status}`;
+        weightDisplay.className = "status normal";
       }
-    }
-
-    updateWeight();
+    });
   </script>
 </body>
 </html>
