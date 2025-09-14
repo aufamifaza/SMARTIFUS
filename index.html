@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMARTIFUS Monitoring</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background: #f4f6f9;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: inline-block;
+      min-width: 300px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .status {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    .normal {
+      color: green;
+    }
+    .warning {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>SMARTIFUS</h1>
+    <p>Monitoring Berat Infus</p>
+    <div class="status" id="weight">Loading...</div>
+  </div>
+
+  <script>
+    // Dummy data dulu, nanti ganti ambil dari Firebase
+    let weight = 250; // contoh berat awal
+
+    function updateWeight() {
+      const display = document.getElementById("weight");
+      if (weight <= 100) {
+        display.innerHTML = `Berat: ${weight} gram <br> ⚠ Infus hampir habis!`;
+        display.className = "status warning";
+      } else {
+        display.innerHTML = `Berat: ${weight} gram`;
+        display.className = "status normal";
+      }
+    }
+
+    updateWeight();
+  </script>
+</body>
+</html>
