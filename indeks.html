@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Monitoring Berat Infus</title>
+</head>
+<body>
+  <h1>Monitoring Berat Infus</h1>
+  <p>Berat: <span id="berat">-</span></p>
+  <p>Status: <span id="status">-</span></p>
+  <button id="askPerm">Izinkan Notifikasi</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDIRSY2vBMdGK10kGVcj5JYkPOGTI6oGc",
+      authDomain: "smartifus.firebaseapp.com",
+      databaseURL: "https://smartifus-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smartifus",
+      storageBucket: "smartifus.firebasestorage.app",
+      messagingSenderId: "307663183811",
+      appId: "1:307663183811:web:e6d783e210038da31d6776"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const beratEl = document.getElementById("berat");
+    const statusEl = document.getElementById("status");
+    const askBtn = document.getElementById("askPerm");
+    let alerted = false;
+
+    askBtn.onclick = () => {
+      if ("Notification" in window) {
+        Notification.requestPermission();
+      } else alert("Browser tidak mendukung Notifications API");
+    };
+
+    const beratRef = ref(db, "infus/berat");
+    const statusRef = ref(db, "infus/status");
+
+    onValue(beratRef, (snap) => {
+      const val = snap.val();
+      if (val === null) return;
+      beratEl.innerText = Number(val).toFixed(2) + " g";
+
+      if (val < 100 && !alerted) {
+        alerted = true;
+        statusEl.style.color = "red";
+        if (Notification.permission === "granted") {
+          new Notification("Infus hampir habis", { body: `Berat: ${Number(val).toFixed(2)} g` });
+        } else {
+          alert("Infus hampir habis: " + Number(val).toFixed(2) + " g");
+        }
+      } else if (val >= 100) {
+        alerted = false;
+        statusEl.style.color = "green";
+      }
+    });
+
+    onValue(statusRef, (snap) => {
+      statusEl.innerText = snap.val() || "-";
+    });
+
+  </script>
+</body>
+</html>
